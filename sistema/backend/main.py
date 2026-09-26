@@ -1,10 +1,13 @@
 from fastapi import FastAPI
-from config import settings
+from sqlalchemy import text
 
+from database import engine
 
 app = FastAPI()
-print(settings.database_url)
+
 
 @app.get("/health")
 async def read_health():
-    return {"status": "healthy"}
+    async with engine.begin() as conn:
+        await conn.execute(text("SELECT 1"))
+    return {"status": "healthy", "database": "ok"}
